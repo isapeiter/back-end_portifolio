@@ -15,7 +15,6 @@ const db = admin.firestore();
 
 app.use(cors());
 app.use(express.json());
-
 app.get('/cartoes'), async (req, res) => {
     try {
       const response = await db.collection('cartoes').get();
@@ -31,6 +30,7 @@ app.get('/cartoes'), async (req, res) => {
       console.log('Cartoes não foram encontrados afe');
     }
 };
+
 
 // Lista completa de cartões
 // let cartoes = [
