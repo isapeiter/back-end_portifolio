@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interação com Backend</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 5px;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interagir com Backend Express</h1>
+
+  <!-- GET Request -->
+  <div class="container">
+    <h2>Listar Mensagens (GET)</h2>
+    <button onclick="getFalas()">Carregar Mensagens</button>
+    <div id="get-result"></div>
+  </div>
+
+  <!-- POST Request -->
+  <div class="container">
+    <h2>Criar Mensagem (POST)</h2>
+    <label for="mensagem">Mensagem: </label>
+    <input type="text" id="post-mensagem" placeholder="Digite uma mensagem">
+    <button onclick="postFala()">Criar Mensagem</button>
+    <div id="post-result"></div>
+  </div>
+
+  <!-- PUT Request -->
+  <div class="container">
+    <h2>Atualizar Mensagem (PUT)</h2>
+    <label for="put-numero">Número: </label>
+    <input type="number" id="put-numero" placeholder="Digite o número da mensagem">
+    <label for="put-mensagem">Nova Mensagem: </label>
+    <input type="text" id="put-mensagem" placeholder="Digite a nova mensagem">
+    <button onclick="putFala()">Atualizar Mensagem</button>
+    <div id="put-result"></div>
+  </div>
+
+  <!-- DELETE Request -->
+  <div class="container">
+    <h2>Deletar Mensagem (DELETE)</h2>
+    <label for="delete-numero">Número: </label>
+    <input type="number" id="delete-numero" placeholder="Digite o número da mensagem">
+    <button onclick="deleteFala()">Deletar Mensagem</button>
+    <div id="delete-result"></div>
+  </div>
+
+  <script>
+    const baseURL = 'http://localhost:3000';
+
+    // GET request
+    function getFalas() {
+      fetch(`${baseURL}/falas`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('get-result').innerText = JSON.stringify(data.vetor, null, 2);
+        })
+        .catch(error => console.error('Erro no GET:', error));
+    }
+
+    // POST request
+    function postFala() {
+      const mensagem = document.getElementById('post-mensagem').value;
+
+      fetch(`${baseURL}/falas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mensagem })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('post-result').innerText = data.mensagem;
+      })
+      .catch(error => console.error('Erro no POST:', error));
+    }
+
+    // PUT request
+    function putFala() {
+      const numero = document.getElementById('put-numero').value;
+      const mensagem = document.getElementById('put-mensagem').value;
+
+      fetch(`${baseURL}/falas`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero: parseInt(numero), mensagem })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('put-result').innerText = data.mensagem;
+      })
+      .catch(error => console.error('Erro no PUT:', error));
+    }
+
+    // DELETE request
+    function deleteFala() {
+      const numero = document.getElementById('delete-numero').value;
+
+      fetch(`${baseURL}/falas`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero: parseInt(numero) })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('delete-result').innerText = data.mensagem;
+      })
+      .catch(error => console.error('Erro no DELETE:', error));
+    }
+  </script>
+</body>
+</html>
