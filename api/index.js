@@ -106,31 +106,29 @@ app.post('/cartoes', async (req, res) => {
 });
 
 app.delete('/cartoes', async (req, res) => {
-    const id = req.body.cartoes;
-    if (!id) {
-       res.status(400).json({mensagem: "ID do cartão não fornecido!"});
-       console.log('Cartão não encontrado!');
-    }else{
-      try{
-      const cartaoRef = db.collection(cartaoc).doc(id);
+  const id = req.body.cartoes;
+  if (!id) {
+     res.status(400).json({mensagem: "ID do cartão não fornecido!"});
+     console.log('Cartão não encontrado!');
+  } else {
+    try {
+      const cartaoRef = db.collection('cartoes').doc(id);
       const doc = await cartaoRef.get();
       if (!doc.exists) {
-        res.status(404).json({mensagem: "Cartão com ID" + cartao + "não encontrado"});
-        console.log('Cartão não encontrado!');
+        res.status(404).json({mensagem: "Cartão com ID " + id + " não encontrado"});
+        console.log('Cartão com ID: ' + id + ' não encontrado');
       } else {
         await cartaoRef.delete();
-        res.status(200).json({mensagem: "Cartão com ID" + cartao + "deletado"});
-        console.log('Cartão com ID:' + cartao +'deletado');
+        res.status(200).json({mensagem: "Cartão com ID " + id + " deletado"});
+        console.log('Cartão com ID: ' + id + ' deletado');
       }
-        }catch{
-          console.error('Erro ao deletar cartão:', error);
-          res.status(500).json({mensagem: 'Error ao deletar cartão'});
-        }
+    } catch (error) {
+      console.error('Erro ao deletar cartão:', error);
+      res.status(500).json({mensagem: 'Error ao deletar cartão'});
     }
-    // cartoes.splice(cartao, 1);
-    // console.log(cartao + 'deletado');
-    // res.status(201).json({ mensagem: 'Deu boa o delete' + cartao });
+  }
 });
+
 
 
 app.put('/cartoes', async (req, res) => {
@@ -140,7 +138,7 @@ app.put('/cartoes', async (req, res) => {
      console.log('Cartão não encontrado!');
   }else{
     try{
-      const cartaoRef = db.collection('cartoes').doc(id);
+      const cartaoRef = db.collection('cartoes').doc(id); // Correção da referência do ID do cartão
       const doc = await cartaoRef.get();
       if (!doc.exists) {
         res.status(404).json({mensagem: "Cartão com ID" + id + "não encontrado"});
