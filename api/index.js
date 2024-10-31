@@ -1,16 +1,15 @@
 const cors = require('cors');
 const express = require('express');
 const admin = require("firebase-admin");
+
 const app = express();
 // const port = 3000;
-
-
 
 const serviceAccount = {
   type: "service_account",
   project_id: "bd-portifolioisa",
   private_key_id: "7faeb08f30a210da1aed13e43a222d21f0570205",
-  private_key: "-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCwQR3Tp1YeRlmQ\\nSHywzSG7OgsLZk9bt3uGZu0ShuocszowzeYwOQ+azLO4aYlvIO3oCZrzwm/jt03I\\nJVQahj7nVC7jBOOu0qXw9kA9Nv/ikXHE48htQ3m1/LHROLO2fGMgAPXzWRXfyJNP\\nnGllOI3MNJ7bgkBAJc7iEROUyac5fSQRHCCW1ZgKIjOn5QMKYpkVNZxp2w+Ve3jh\\nMb/kduT3GDzlc5iS/033wH0L6BmPYtss6AdbT51S4KQ2Ckf1/Knu+S6jkSnpuU/X\\nmMIvqRa+XvDGlgfu8mcoQySXqOaNd1G2LWOiS5J5wbSpAa+9PKxhcH8ULJvyHhqz\\nJyuzUINrAgMBAAECggEAVIwv8B81vtkVTpKPCcqk8yiBMss1pzPpc8v8ziXcuL66\\n271xPdGpbCLk1UH+9MlxhhzRcTvkq3H7RFavtPePxi0KPslSJMMUafXeU98FuVv2\\nnLF9q/gxsrxQWiIehxu8+xWq5bxms04GaCqKHk2WK45UY8zj4EGir6vsXjOrXXYd\\niO+Qlr7GCNVw+XAXje1GZEXCc6CGEEXC6Vp4RTT6P5R3ot7/WtvTA4ZyFexxiExt\\nbm8eyGpr6Hn829+N7vlMB2U9QK3rTVHJxvVWUrVlgzWzxtb542iwMFBQKHmHaDoP\\nwjSrujXGIWEniCAY6XJU4j+MsJmyl9OSBNsbvoOVLQKBgQD3QJ2ErTJqupY427zM\\n4/yrNRGo64/vkw3xCP3arR9+lzSwltIXII6BWtoBS1fMx3TUTxbHyMxPGzwYhH4d\\ngPJLmaqNjQVonNYIZKrOeFrLRpDBObG8+INvpxAJmA6U20zLpFz7AJieMn4E3VOx\\nu2OXpz9tMeiqpdsrIOSbbwjklwKBgQC2fXdenNUZrknSgZb8n2Ptbm2qRF4Pc7qX\\nfZtvNVo64a9InEdZ4XRhFHIvrQxjuOj7/hBU27KeXfcZHdodEt517SmOb9aP7CaP\\nnp3UUNKXLZAJkxD34yIzXF9Ma8AWhZD+OC5bT3g3B9CWk/7tNSK0WTg5X289/WPG\\nOJc9OuiOTQKBgQCSjgxQHlEqDhsI7MaGNAUKflRPagFRIjs7SfcebUujv4CNw3gY\\nGUYeynk6FyydxwQq7A42sYDYyu3eInqWhl4YDaeYa6RvE7eSFglghNpcbyFSRx5h\\nQnS187J/3U+XUD2+31f1t66+5nLn80CussIfnBTuZozgyZqVf9PBhhkhVQKBgCQr\\nF8aDtOSjG3SCRKeK+6YqNcgCRtYvLLMrrOvMmjaDVldAyg9xVLyM7divJn55Pov7\\nHceDx5IFs5yhwwHyJG8g8xSM6+yYdEgQut1Cq4pU+HA9WqaWuMePLkAaNvb/v+3y\\nupVUWdImVVwStvrShi9SY4dTd9vEZcr6mlcDXuYdAoGAZA51UX22BTGNwJNejcJG\\nTKPiACj3htdyDWwBfJFtKYjQTp4EAryhV/wN5cEsl+6Wzk2pYCrkQqBTjgAIt4nF\\neiK1joauaO2obF4apa9yQN9yd4ZXkXMw4218qzZo08CRrNeB8JBRzg4g+FFhO2Gr\\ntBYLoqxNRQHtfk9ZkxxZX0U=\\n-----END PRIVATE KEY-----\\n",
+  private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCwQR3Tp1YeRlmQ\nSHywzSG7OgsLZk9bt3uGZu0ShuocszowzeYwOQ+azLO4aYlvIO3oCZrzwm/jt03I\nJVQahj7nVC7jBOOu0qXw9kA9Nv/ikXHE48htQ3m1/LHROLO2fGMgAPXzWRXfyJNP\nnGllOI3MNJ7bgkBAJc7iEROUyac5fSQRHCCW1ZgKIjOn5QMKYpkVNZxp2w+Ve3jh\nMb/kduT3GDzlc5iS/033wH0L6BmPYtss6AdbT51S4KQ2Ckf1/Knu+S6jkSnpuU/X\nmMIvqRa+XvDGlgfu8mcoQySXqOaNd1G2LWOiS5J5wbSpAa+9PKxhcH8ULJvyHhqz\nJyuzUINrAgMBAAECggEAVIwv8B81vtkVTpKPCcqk8yiBMss1pzPpc8v8ziXcuL66\n271xPdGpbCLk1UH+9MlxhhzRcTvkq3H7RFavtPePxi0KPslSJMMUafXeU98FuVv2\nnLF9q/gxsrxQWiIehxu8+xWq5bxms04GaCqKHk2WK45UY8zj4EGir6vsXjOrXXYd\niO+Qlr7GCNVw+XAXje1GZEXCc6CGEEXC6Vp4RTT6P5R3ot7/WtvTA4ZyFexxiExt\nbm8eyGpr6Hn829+N7vlMB2U9QK3rTVHJxvVWUrVlgzWzxtb542iwMFBQKHmHaDoP\nwjSrujXGIWEniCAY6XJU4j+MsJmyl9OSBNsbvoOVLQKBgQD3QJ2ErTJqupY427zM\n4/yrNRGo64/vkw3xCP3arR9+lzSwltIXII6BWtoBS1fMx3TUTxbHyMxPGzwYhH4d\ngPJLmaqNjQVonNYIZKrOeFrLRpDBObG8+INvpxAJmA6U20zLpFz7AJieMn4E3VOx\nu2OXpz9tMeiqpdsrIOSbbwjklwKBgQC2fXdenNUZrknSgZb8n2Ptbm2qRF4Pc7qX\nfZtvNVo64a9InEdZ4XRhFHIvrQxjuOj7/hBU27KeXfcZHdodEt517SmOb9aP7CaP\nnp3UUNKXLZAJkxD34yIzXF9Ma8AWhZD+OC5bT3g3B9CWk/7tNSK0WTg5X289/WPG\nOJc9OuiOTQKBgQCSjgxQHlEqDhsI7MaGNAUKflRPagFRIjs7SfcebUujv4CNw3gY\nGUYeynk6FyydxwQq7A42sYDYyu3eInqWhl4YDaeYa6RvE7eSFglghNpcbyFSRx5h\nQnS187J/3U+XUD2+31f1t66+5nLn80CussIfnBTuZozgyZqVf9PBhhkhVQKBgCQr\nF8aDtOSjG3SCRKeK+6YqNcgCRtYvLLMrrOvMmjaDVldAyg9xVLyM7divJn55Pov7\nHceDx5IFs5yhwwHyJG8g8xSM6+yYdEgQut1Cq4pU+HA9WqaWuMePLkAaNvb/v+3y\nupVUWdImVVwStvrShi9SY4dTd9vEZcr6mlcDXuYdAoGAZA51UX22BTGNwJNejcJG\nTKPiACj3htdyDWwBfJFtKYjQTp4EAryhV/wN5cEsl+6Wzk2pYCrkQqBTjgAIt4nF\neiK1joauaO2obF4apa9yQN9yd4ZXkXMw4218qzZo08CRrNeB8JBRzg4g+FFhO2Gr\ntBYLoqxNRQHtfk9ZkxxZX0U=\n-----END PRIVATE KEY-----\n",
   client_email: "firebase-adminsdk-cxm68@bd-portifolioisa.iam.gserviceaccount.com",
   client_id: "113454937827680119010",
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
@@ -29,7 +28,7 @@ app.use(cors());
 app.use(express.json());
 app.get('/cartoes', async (req, res) => {
     try {
-      const response = await db.collection('cartoes').get();
+      const response = await db.collection('Cartoes').get();
       const cartoes = response.docs.map(doc => ({
         id: doc.id, ...doc.data(),
       }));
@@ -86,7 +85,7 @@ app.post('/cartoes', async (req, res) => {
        console.log('Novo cartão não cadastrado, valor invalido!');
     }else{
       try {
-        const novoCartaoRef = await db.collection('cartoes').add({
+        const novoCartaoRef = await db.collection('Cartoes').add({
           nome,
           valor,
           imagem,
@@ -112,7 +111,7 @@ app.delete('/cartoes', async (req, res) => {
      console.log('Cartão não encontrado!');
   } else {
     try {
-      const cartaoRef = db.collection('cartoes').doc(id);
+      const cartaoRef = db.collection('Cartoes').doc(id);
       const doc = await cartaoRef.get();
       if (!doc.exists) {
         res.status(404).json({mensagem: "Cartão com ID " + id + " não encontrado"});
@@ -138,7 +137,7 @@ app.put('/cartoes', async (req, res) => {
      console.log('Cartão não encontrado!');
   }else{
     try{
-      const cartaoRef = db.collection('cartoes').doc(id); // Correção da referência do ID do cartão
+      const cartaoRef = db.collection('Cartoes').doc(id); // Correção da referência do ID do cartão
       const doc = await cartaoRef.get();
       if (!doc.exists) {
         res.status(404).json({mensagem: "Cartão com ID" + id + "não encontrado"});
@@ -164,7 +163,6 @@ module.exports = app;
 // app.listen(3000, () => {
 //   console.log('rodando')
 // });
-
 
 // app.listen(port, () => {
 //     console.log(`Servidor rodando na porta ${port}`);
